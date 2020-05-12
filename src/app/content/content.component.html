@@ -1,0 +1,11 @@
+<pre>Amount: {{ data.items.length }}</pre>
+<ul>
+  <li *ngFor="let item of data.items">
+    <pre>
+      ID: {{ item.id }}
+      OrgUnit: {{ item.orgUnit }}
+      Type: {{ item.type }}
+      Category: {{ item.categoryType }}
+    </pre>
+  </li>
+</ul>

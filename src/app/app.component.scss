@@ -1,0 +1,23 @@
+:host,
+.app {
+  display: flex;
+  flex-grow: 1;
+}
+
+:host {
+  flex-direction: column;
+}
+
+.app {
+  flex-direction: row;
+
+  &__filters,
+  &__content {
+    padding: 16px;
+  }
+
+  &__filters {
+    width: 320px;
+    border-right: 1px solid #eeeeee;
+  }
+}
