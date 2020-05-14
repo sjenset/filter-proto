@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { MockData } from '../data/mock.data';
+import { Item } from '../shared/interfaces/item.interface';
+import { MockData } from '../shared/interfaces/mock-data.interface';
 
 @Component({
   selector: 'app-content',
@@ -9,4 +10,5 @@ import { MockData } from '../data/mock.data';
 })
 export class ContentComponent {
   @Input() data: MockData;
+  @Input() items: Item[];
 }

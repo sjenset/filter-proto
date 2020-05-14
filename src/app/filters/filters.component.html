@@ -1,41 +1,84 @@
-<ng-container *ngIf="data">
-  <ng-container [ngSwitch]="scope">
-    <ng-container *ngSwitchCase="Scopes.OrgUnit">
-      <a href="#" (click)="clearSelection($event);">&laquo; Tilbake</a>
-      <h3>{{ data.orgUnits[0].type }} ({{ data.orgUnitCounts[data.orgUnits[0].type] }})</h3>
-    </ng-container>
-    <ng-container *ngSwitchCase="Scopes.Category">
-      <a href="#" (click)="clearSelection($event);">&laquo; Tilbake</a>
-      <h3>{{ data.categories[0].type }} ({{ data.categoryCounts[data.categories[0].type] }})</h3>
-    </ng-container>
-    <ng-container *ngSwitchCase="Scopes.EventType">
-      <a href="#" (click)="clearSelection($event);">&laquo; Tilbake</a>
-      <h3>{{ data.events[0].type }} ({{ data.eventTypeCounts[data.events[0].type] }})</h3>
-    </ng-container>
+<ng-container *ngIf="facetGroups">
+  <ng-container *ngFor="let group of facetGroups">
+    <div class="filters__heading filters__heading--toggle"
+      [ngClass]="{'filters__heading--expandable': group.expandable, 'filters__heading--expanded': group.expanded}"
+      (click)="toggleExpansion($event, group.scope);">
+      <h3>{{ group.heading }}</h3>
+    </div>
+    <ul class="filters__list" [ngClass]="{'filters__list--expanded': group.expanded}">
+      <ng-container *ngFor="let facet of group.facets">
+        <li class="filters__item">
+          <span class="filters__facet"
+            [ngClass]="{'filters__facet--active': facet.selected, 'filters__facet--inactive': facet.itemAmount === 0}"
+            (click)="toggleFacet($event, group.scope, facet.id, facet.itemAmount === 0);">{{ facet.title }}
+            ({{ facet.itemAmount }})</span>
+        </li>
+        <li *ngIf="facet.selected && facet.subFacets && facet.subFacets.length">
+          <ul class="filters__list filters__list--nested">
+            <li *ngFor="let subFacet of facet.subFacets" class="filters__item">
+              <span class="filters__facet"
+                [ngClass]="{'filters__facet--active': subFacet.selected, 'filters__facet--inactive': subFacet.itemAmount === 0}"
+                (click)="toggleFacet($event, Scope.EventType, subFacet.id, subFacet.itemAmount === 0, facet.id);">{{ subFacet.title }}
+                ({{ subFacet.itemAmount }})</span>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
   </ng-container>
-  <ng-container *ngIf="scope !== Scopes.OrgUnit">
-    <h3>Org. enheter</h3>
-    <ul>
-      <li *ngFor="let orgUnit of data.orgUnits; let index = index;">
-        <a href="#" (click)="select($event, Scopes.OrgUnit, index);">{{ orgUnit.type }}
-          ({{ data.orgUnitCounts[orgUnit.type] }})</a>
+
+
+  <!-- <ng-container *ngIf="data.scope.orgUnit || data.scope.category">
+    <div class="filters__heading">
+      <h3>Scope</h3>
+    </div>
+    <a *ngIf="data.scope.orgUnit" href="#" class="filters__link filters__link--scoped"
+      title="Fjern denne org. enheten fra scope"
+      (click)="deselect($event, Scope.OrgUnit, data.scope.orgUnit.id);">{{ data.scope.orgUnit.type }}
+      ({{ data.scope.orgUnitItems.length }})</a>
+    <a *ngIf="data.scope.category" href="#" class="filters__link filters__link--scoped"
+      title="Fjern denne org. kategorien fra scope"
+      (click)="deselect($event, Scope.Category, data.scope.category.id);">{{ data.scope.category.type }}
+      ({{ data.scope.categoryItems.length }})</a>
+    <a *ngIf="data.scope.eventType" href="#" class="filters__link filters__link--scoped"
+      title="Fjern denne hendelsestypen fra scope"
+      (click)="deselect($event, Scope.EventType, data.scope.eventType.id);">{{ data.scope.eventType.type }}
+      ({{ data.scope.eventTypeItems.length }})</a>
+  </ng-container>
+  <ng-container *ngIf="!data.scope.orgUnit">
+    <div class="filters__heading">
+      <h3>Org. enheter</h3>
+    </div>
+    <ul class="filters__list filters__list--expanded">
+      <li *ngFor="let item of data.scope.orgUnits" class="filters__item">
+        <a href="#" class="filters__link" title="Sett scope til denne org. enheten"
+          (click)="select($event, Scope.OrgUnit, item.id);">{{ item.type }} ({{ item.items.length }})</a>
       </li>
     </ul>
   </ng-container>
-  <ng-container *ngIf="scope !== Scopes.Category">
-    <h3>Kategorier</h3>
-    <ul>
-      <li *ngFor="let item of data.categories; let index = index;">
-        <a href="#" (click)="select($event, Scopes.Category, index);">{{ item.type }} ({{ data.categoryCounts[item.type] }})</a>
+  <ng-container *ngIf="!data.scope.category">
+    <div class="filters__heading filters__heading--toggle"
+      [ngClass]="{'filters__heading--expanded': data.categoriesExpanded}"
+      (click)="toggleExpansion($event, Scope.Category);">
+      <h3>Kategorier</h3>
+    </div>
+    <ul class="filters__list" [ngClass]="{'filters__list--expanded': data.categoriesExpanded}">
+      <li *ngFor="let item of data.scope.categories" class="filters__item">
+        <a href="#" class="filters__link" title="Sett scope til denne kategorien"
+          (click)="select($event, Scope.Category, item.id);">{{ item.type }} (??)</a>
       </li>
     </ul>
   </ng-container>
-  <ng-container *ngIf="scope !== Scopes.EventType">
-    <h3>Hendelsestyper</h3>
-    <ul>
-      <li *ngFor="let item of data.events; let index = index;">
-        <a href="#" (click)="select($event, Scopes.EventType, index);">{{ item.type }} ({{ data.eventTypeCounts[item.type] }})</a>
+  <ng-container *ngIf="!data.scope.eventType">
+    <div class="filters__heading filters__heading--toggle"
+      [ngClass]="{'filters__heading--expanded': data.eventTypesExpanded}"
+      (click)="toggleExpansion($event, Scope.EventType);">
+      <h3>Hendelsestyper</h3>
+    </div>
+    <ul class="filters__list" [ngClass]="{'filters__list--expanded': data.eventTypesExpanded}">
+      <li *ngFor="let item of data.scope.eventTypes" class="filters__item">
+        <a href="#" class="filters__link" title="Sett scope til denne hendelsestypen"
+          (click)="select($event, Scope.EventType, item.id);">{{ item.type }} (??)</a>
       </li>
     </ul>
-  </ng-container>
+  </ng-container> -->
 </ng-container>

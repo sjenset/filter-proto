@@ -1,11 +1,19 @@
-<pre>Amount: {{ data.items.length }}</pre>
-<ul>
-  <li *ngFor="let item of data.items">
-    <pre>
-      ID: {{ item.id }}
-      OrgUnit: {{ item.orgUnit }}
-      Type: {{ item.type }}
-      Category: {{ item.categoryType }}
-    </pre>
-  </li>
-</ul>
+<ng-container *ngIf="items && items.length; else EmptyState">
+  <pre>Amount: {{ items.length }}</pre>
+  <ul>
+    <li *ngFor="let item of items">
+      <pre>
+        ID: {{ item.id }}
+        OrgUnit: {{ item.orgUnit }}
+        Type: {{ item.type }}
+        Category: {{ item.categoryType }}
+      </pre>
+    </li>
+  </ul>
+</ng-container>
+
+<ng-template #EmptyState>
+  <p>Du har for øyeblikket ikke lastet inn noe data.</p>
+  <p>Benytt venstre-menyen for å velge hvilke data som skal hentes.</p>
+  <span class="content__button">Hent valgte data</span>
+</ng-template>

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { FilterData, Scope } from '../app.component';
+import { Scope } from '../shared/enums/scope.enum';
+import { FacetGroup } from '../shared/interfaces/facet-group.interface';
+import { FacetToggleEvent } from '../shared/interfaces/facet-toggle-event.interface';
 
 @Component({
   selector: 'app-filters',
@@ -8,23 +10,32 @@ import { FilterData, Scope } from '../app.component';
   styleUrls: ['./filters.component.scss']
 })
 export class FiltersComponent {
-  @Input() data: FilterData;
-  @Input() scope: Scope;
+  @Input() facetGroups: FacetGroup[];
 
-  @Output() scopeSelected: EventEmitter<{scope: Scope, index: number}> = new EventEmitter<{scope: Scope, index: number}>();
-  @Output() selectionCleared: EventEmitter<void> = new EventEmitter<void>();
+  @Output() facetToggled: EventEmitter<FacetToggleEvent> = new EventEmitter<FacetToggleEvent>();
+  @Output() loadData: EventEmitter<void> = new EventEmitter<void>();
+  @Output() groupToggled: EventEmitter<Scope> = new EventEmitter<Scope>();
 
-  public Scopes = Scope;
+  public Scope = Scope;
 
-  public select(e: MouseEvent | TouchEvent, scope: Scope, index: number): void {
+  public toggleExpansion(e: MouseEvent | TouchEvent, scope: Scope): void {
     e.preventDefault();
     e.stopPropagation();
-    this.scopeSelected.emit({scope, index});
+    this.groupToggled.emit(scope);
   }
 
-  public clearSelection(e: MouseEvent | TouchEvent): void {
+  public toggleFacet(e: MouseEvent | TouchEvent, scope: Scope, id: number, inactive: boolean = false, categoryId: number = null): void {
     e.preventDefault();
     e.stopPropagation();
-    this.selectionCleared.emit();
+    if (inactive) {
+      return;
+    }
+    this.facetToggled.emit({ scope, id, categoryId });
+  }
+
+  public load(e: MouseEvent | TouchEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.loadData.emit();
   }
 }
