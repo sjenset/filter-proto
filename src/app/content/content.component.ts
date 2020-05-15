@@ -11,4 +11,5 @@ import { MockData } from '../shared/interfaces/mock-data.interface';
 export class ContentComponent {
   @Input() data: MockData;
   @Input() items: Item[];
+  @Input() itemsLoaded: boolean;
 }

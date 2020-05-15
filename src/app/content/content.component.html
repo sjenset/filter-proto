@@ -1,4 +1,11 @@
-<ng-container *ngIf="items && items.length; else EmptyState">
+<ng-container *ngIf="itemsLoaded && items && items.length; else EmptyState">
+</ng-container>
+
+<ng-template #EmptyState>
+  <p>Du har for øyeblikket ikke lastet inn noe data.</p>
+  <p>Benytt venstre-menyen for å velge hvilke data som skal hentes.</p>
+  <span class="content__button">Hent valgte data</span>
+  <h3>Debug:</h3>
   <pre>Amount: {{ items.length }}</pre>
   <ul>
     <li *ngFor="let item of items">
@@ -10,10 +17,4 @@
       </pre>
     </li>
   </ul>
-</ng-container>
-
-<ng-template #EmptyState>
-  <p>Du har for øyeblikket ikke lastet inn noe data.</p>
-  <p>Benytt venstre-menyen for å velge hvilke data som skal hentes.</p>
-  <span class="content__button">Hent valgte data</span>
 </ng-template>

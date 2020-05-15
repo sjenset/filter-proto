@@ -14,11 +14,13 @@ import { DataService } from './shared/services/data.service';
 })
 export class AppComponent implements OnInit {
   public facetGroups$: Observable<FacetGroup[]>;
+  public items$: Observable<Item[]>;
   public loadedItems: Item[] = null;
 
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
+    this.items$ = this.dataService.items;
     this.facetGroups$ = this.dataService.facets;
   }
 

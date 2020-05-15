@@ -1,5 +1,5 @@
 <main class="app">
   <app-filters [facetGroups]="facetGroups$ | async" class="app__filters" (facetToggled)="onFacetToggled($event);"
     (loadData)="onLoadData();" (groupToggled)="onGroupToggled($event);"></app-filters>
-  <app-content [items]="loadedItems" class="app__content"></app-content>
+  <app-content [items]="items$ | async" class="app__content"></app-content>
 </main>

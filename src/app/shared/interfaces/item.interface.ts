@@ -7,4 +7,5 @@ export interface Item {
   type: EventTypes;
   categoryType: Categories;
   orgUnit: OrgUnits;
+  visible: boolean;
 }
