@@ -24,12 +24,9 @@ export class FiltersComponent {
     this.groupToggled.emit(scope);
   }
 
-  public toggleFacet(e: MouseEvent | TouchEvent, scope: Scope, id: number, inactive: boolean = false, categoryId: number = null): void {
+  public toggleFacet(e: MouseEvent | TouchEvent, scope: Scope, id: number, categoryId: number = null): void {
     e.preventDefault();
     e.stopPropagation();
-    if (inactive) {
-      return;
-    }
     this.facetToggled.emit({ scope, id, categoryId });
   }
 

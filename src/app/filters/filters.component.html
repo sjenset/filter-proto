@@ -10,7 +10,7 @@
         <li class="filters__item">
           <span class="filters__facet"
             [ngClass]="{'filters__facet--active': facet.selected, 'filters__facet--inactive': facet.itemAmount === 0}"
-            (click)="toggleFacet($event, group.scope, facet.id, facet.itemAmount === 0);">{{ facet.title }}
+            (click)="toggleFacet($event, group.scope, facet.id);">{{ facet.title }}
             ({{ facet.itemAmount }})</span>
         </li>
         <li *ngIf="facet.selected && facet.subFacets && facet.subFacets.length">
@@ -18,7 +18,7 @@
             <li *ngFor="let subFacet of facet.subFacets" class="filters__item">
               <span class="filters__facet"
                 [ngClass]="{'filters__facet--active': subFacet.selected, 'filters__facet--inactive': subFacet.itemAmount === 0}"
-                (click)="toggleFacet($event, Scope.EventType, subFacet.id, subFacet.itemAmount === 0, facet.id);">{{ subFacet.title }}
+                (click)="toggleFacet($event, Scope.EventType, subFacet.id, facet.id);">{{ subFacet.title }}
                 ({{ subFacet.itemAmount }})</span>
           </ul>
         </li>
