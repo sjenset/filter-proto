@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Scope } from './shared/enums/scope.enum';
-import { FacetGroup } from './shared/interfaces/facet-group.interface';
 import { FacetToggleEvent } from './shared/interfaces/facet-toggle-event.interface';
+import { Facet } from './shared/interfaces/facet.interface';
 import { Item } from './shared/interfaces/item.interface';
 import { DataService } from './shared/services/data.service';
 
@@ -13,7 +12,8 @@ import { DataService } from './shared/services/data.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public facetGroups$: Observable<FacetGroup[]>;
+  public facets$: Observable<Facet[]>;
+  public heading$: Observable<string>;
   public items$: Observable<Item[]>;
   public loadedItems: Item[] = null;
 
@@ -21,22 +21,19 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.items$ = this.dataService.items;
-    this.facetGroups$ = this.dataService.facets;
+    this.facets$ = this.dataService.facets;
+    this.heading$ = this.dataService.heading;
   }
 
   public onFacetToggled(data: FacetToggleEvent): void {
     this.dataService.toggleFacet(data);
   }
 
-  public onGroupToggled(scope: Scope): void {
-    this.dataService.toggleGroup(scope);
+  public onGroupToggled(groupId: number): void {
+    this.dataService.toggleGroup(groupId);
   }
 
   public onLoadData(): void {
     alert('NYI: Load data');
-  }
-
-  public onExpansionToggled(scope: Scope): void {
-
   }
 }

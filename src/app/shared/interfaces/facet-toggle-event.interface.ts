@@ -1,7 +1,5 @@
-import { Scope } from '../enums/scope.enum';
-
 export interface FacetToggleEvent {
-  scope: Scope;
-  id: number;
-  categoryId: number;
+  level1Id: number;
+  level2Id?: number;
+  level3Id?: number;
 }

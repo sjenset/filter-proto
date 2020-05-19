@@ -1,180 +1,202 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { MOCK_DATA } from '../data/mock.data';
-import { Scope } from '../enums/scope.enum';
-import { FacetGroup } from '../interfaces/facet-group.interface';
+import { Categories } from '../enums/categories.enum';
+import { EventTypes } from '../enums/event-types.enum';
+import { FacetType } from '../enums/facet-type.enum';
+import { Headings } from '../enums/headings.enum';
 import { FacetToggleEvent } from '../interfaces/facet-toggle-event.interface';
 import { Facet } from '../interfaces/facet.interface';
-import { MockData } from '../interfaces/mock-data.interface';
 import { Item } from '../interfaces/item.interface';
-import { Categories } from '../enums/categories.enum';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DataService implements OnDestroy {
-  private facetGroups: BehaviorSubject<FacetGroup[]> = new BehaviorSubject<FacetGroup[]>(null);
-  private itemCollection: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
-  private subscription: Subscription = new Subscription();
+export class DataService {
+  private facets$: BehaviorSubject<Facet[]> = new BehaviorSubject<Facet[]>(null);
+  private items$: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
+  private facetType$: BehaviorSubject<FacetType> = new BehaviorSubject<FacetType>(FacetType.OrgUnits);
+  private heading$: BehaviorSubject<string> = new BehaviorSubject<string>(Headings.OrgUnits);
 
   constructor() {
     this.buildFacets();
-    this.itemCollection.next(MOCK_DATA.items);
-    this.items.subscribe(_ => this.updateFacets());
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   public get items(): Observable<Item[]> {
-    return this.itemCollection.asObservable();
+    return this.items$.asObservable();
   }
 
-  public get facets(): Observable<FacetGroup[]> {
-    return this.facetGroups.asObservable();
+  public get facets(): Observable<Facet[]> {
+    return this.facets$.asObservable();
   }
 
-  public get data(): MockData {
-    return MOCK_DATA;
+  public get heading(): Observable<string> {
+    return this.heading$.asObservable();
   }
 
-  public toggleGroup(scope: Scope): void {
-    const facetGroups = this.facetGroups.getValue();
-    const group = facetGroups.find(fg => fg.scope === scope);
+  public toggleGroup(groupId: number): void {
+    const facets = this.facets$.getValue();
 
-    if (!group.expandable) {
-      return;
-    }
-    group.expanded = !group.expanded;
-    this.facetGroups.next([...facetGroups]);
+    facets.forEach(f => {
+      if (f.children.groupId === groupId) {
+        f.children.expanded = !f.children.expanded;
+      } else {
+        f.children.facets.forEach(c => {
+          if (c.children.groupId === groupId) {
+            c.children.expanded = !c.children.expanded;
+          }
+        });
+      }
+    });
+    this.facets$.next([...facets]);
   }
 
   public toggleFacet(data: FacetToggleEvent): void {
-    const facetGroups = this.facetGroups.getValue();
-    let facet: Facet;
+    const facetType = this.facetType$.getValue();
+    const facets = this.facets$.getValue();
 
-    if (data.scope === Scope.EventType) {
-      const categories = facetGroups.find(fg => fg.scope === Scope.Category);
-      const category = categories.facets.find(f => f.id === data.categoryId);
+    switch (facetType) {
+      case FacetType.OrgUnits:
+        if (data.level3Id !== null && data.level3Id !== undefined) {
+          const orgUnit = facets.find(f => f.id === data.level1Id);
+          const category = orgUnit.children.facets.find(f => f.id === data.level2Id);
+          const eventType = category.children.facets.find(f => f.id === data.level3Id);
 
-      facet = category.subFacets.find(sf => sf.id === data.id);
-    } else {
-      facet = facetGroups.find(fg => fg.scope === data.scope).facets.find(f => f.id === data.id);
+          eventType.selected = !eventType.selected;
+
+        } else if (data.level2Id !== null && data.level2Id !== undefined) {
+          const orgUnit = facets.find(f => f.id === data.level1Id);
+          const category = orgUnit.children.facets.find(f => f.id === data.level2Id);
+
+          category.selected = !category.selected;
+          if (!category.selected) {
+            category.children.facets.filter(f => f.selected).forEach(e => e.selected = false);
+          }
+
+        } else {
+          const orgUnit = facets.find(f => f.id === data.level1Id);
+
+          orgUnit.selected = !orgUnit.selected;
+          if (!orgUnit.selected) {
+            orgUnit.children.facets.filter(f => f.selected).forEach(c => {
+              c.children.facets.filter(f => f.selected).forEach(e => e.selected = false);
+              c.selected = false;
+            });
+          }
+
+        }
+        break;
     }
 
-    facet.selected = !facet.selected;
-    this.facetGroups.next([...facetGroups]);
+    this.facets$.next([...facets]);
     this.updateItems();
   }
 
   private updateFacets(): void {
-    const itemCollection = this.itemCollection.getValue();
-    const facetGroups = this.facetGroups.getValue();
-    const orgUnit = facetGroups.find(fg => fg.scope === Scope.OrgUnit);
-    const category = facetGroups.find(fg => fg.scope === Scope.Category);
-    const orgUnits = orgUnit.facets.filter(f => f.selected).map(f => f.type);
-    const categories = category.facets.filter(f => f.selected).map(f => f.type);
-
-    orgUnit.facets.forEach(f => {
-      f.itemAmount = itemCollection.filter(i => {
-        return i.orgUnit === f.type && (!categories.length || categories.indexOf(i.categoryType) !== -1);
-      }).length;
-    });
-    category.facets.forEach(f => {
-      f.itemAmount = itemCollection.filter(i => {
-        return i.categoryType === f.type && (!orgUnits.length || orgUnits.indexOf(i.orgUnit) !== -1);
-      }).length;
-      if (f.subFacets) {
-        f.subFacets.forEach(sf => {
-          sf.itemAmount = itemCollection.filter(i => i.categoryType === f.type && i.type === sf.type).length;
-        });
-      }
-    });
+    // TODO: Do we need this?
   }
 
   private updateItems(): void {
-    const facetGroups = this.facetGroups.getValue();
-    const orgUnit = facetGroups.find(fg => fg.scope === Scope.OrgUnit);
-    const category = facetGroups.find(fg => fg.scope === Scope.Category);
-    const orgUnits = orgUnit.facets.filter(f => f.selected).map(f => f.type);
-    const categories = category.facets.filter(f => f.selected).map(f => f.type);
-    if (!orgUnits.length && !categories.length) {
-      this.itemCollection.next(MOCK_DATA.items);
-      facetGroups.find(fg => fg.scope === Scope.Category).facets.forEach(f => f.subFacets.forEach(sf => sf.selected = false));
-      this.facetGroups.next([...facetGroups]);
+    const facetType = this.facetType$.getValue();
+    const facets = this.facets$.getValue();
+    const newItems = [];
 
-      return;
+    switch (facetType) {
+      case FacetType.OrgUnits:
+        if (!facets.filter(o => o.selected).length) {
+          this.items$.next([...MOCK_DATA.items]);
+
+          break;
+        }
+        facets.filter(o => o.selected).forEach(o => {
+          const categoryTypes: Categories[] = [];
+          const eventTypes: EventTypes[] = [];
+          let items = MOCK_DATA.items.filter(i => i.orgUnit === o.type);
+
+          o.children.facets.filter(c => c.selected).forEach(c => {
+            categoryTypes.push(c.type as Categories);
+            c.children.facets.filter(e => e.selected).forEach(e => eventTypes.push(e.type as EventTypes));
+          });
+          items = items.filter(i => {
+            return (!categoryTypes.length || categoryTypes.indexOf(i.categoryType) !== -1) &&
+              (!eventTypes.length || eventTypes.indexOf(i.type) !== -1);
+          });
+          items.forEach(i => newItems.push(i));
+        });
+
+        this.items$.next([...newItems]);
+
+        break;
     }
-    let eventTypes = [];
-    let items = [];
-
-    category.facets.forEach(c => c.subFacets.filter(sf => sf.selected).forEach(sf => eventTypes.push(sf.type)));
-    eventTypes = [...new Set(eventTypes)];
-    items = [...MOCK_DATA.items].filter(i => orgUnits.indexOf(i.orgUnit) !== -1 || categories.indexOf(i.categoryType) !== -1);
-    if (eventTypes.length) {
-      items = items.filter(i => eventTypes.indexOf(i.type) !== -1);
-    }
-
-    this.itemCollection.next([...new Set(items)]);
+    this.updateFacets();
   }
 
   private buildFacets(): void {
-    const facetGroups: FacetGroup[] = [
-      {
-        heading: 'Org. enheter',
-        scope: Scope.OrgUnit,
-        facets: [],
-        expandable: false,
-        expanded: true
-      },
-      {
-        heading: 'Kategorier',
-        scope: Scope.Category,
-        facets: [],
-        expandable: true,
-        expanded: false
-      },
-    ];
+    const facetType = this.facetType$.getValue();
+    const facets: Facet[] = [];
+    let groupId = 1;
 
-    MOCK_DATA.orgUnits.forEach(o => {
-      facetGroups.find(f => f.scope === Scope.OrgUnit).facets.push({
-        id: o.id,
-        type: o.type,
-        title: o.type.toString(),
-        selected: false,
-        itemAmount: 0
-      });
-    });
-    MOCK_DATA.categories.forEach(c => {
-      const items = MOCK_DATA.items.filter(i => i.categoryType === c.type);
-      const eventTypes = [...new Set(items.map(i => i.type))];
-      const subFacets: Facet[] = [];
+    switch (facetType) {
+      case FacetType.OrgUnits:
+        MOCK_DATA.orgUnits.forEach(o => {
+          const categoryFacets: Facet[] = [];
+          const items = MOCK_DATA.items.filter(i => o.items.indexOf(i.id) !== -1);
 
-      eventTypes.forEach(e => {
-        const eventType = MOCK_DATA.eventTypes.find(et => et.type === e);
+          o.categories.forEach(cId => {
+            const category = MOCK_DATA.categories.find(c => c.id === cId);
+            const categoryItems = items.filter(i => i.categoryType === category.type);
+            const eventTypes = [...new Set(categoryItems.map(i => i.type))];
+            const eventTypeFacets: Facet[] = [];
 
-        subFacets.push({
-          id: eventType.id,
-          type: eventType.type,
-          title: eventType.type.toString(),
-          selected: false,
-          itemAmount: 0
+            eventTypes.forEach(eType => {
+              const eventType = MOCK_DATA.eventTypes.find(e => e.type === eType);
+
+              if (eventType) {
+                eventTypeFacets.push({
+                  id: eventType.id,
+                  type: eventType.type,
+                  title: eventType.type.toString(),
+                  selected: false,
+                  itemAmount: categoryItems.filter(i => i.type === eventType.type).length
+                });
+              }
+            });
+            categoryFacets.push({
+              id: category.id,
+              type: category.type,
+              title: category.type.toString(),
+              selected: false,
+              itemAmount: categoryItems.length,
+              children: {
+                heading: Headings.EventTypes,
+                facets: eventTypeFacets,
+                expanded: eventTypeFacets.length <= 4,
+                groupId
+              }
+            });
+            groupId++;
+          });
+          facets.push({
+            id: o.id,
+            type: o.type,
+            title: o.type.toString(),
+            selected: false,
+            itemAmount: items.length,
+            children: {
+              heading: Headings.Categories,
+              facets: categoryFacets,
+              expanded: categoryFacets.length <= 4,
+              groupId
+            }
+          });
+          groupId++;
         });
-      });
-      facetGroups.find(f => f.scope === Scope.Category).facets.push({
-        id: c.id,
-        type: c.type,
-        title: c.type.toString(),
-        selected: false,
-        itemAmount: 0,
-        subFacets
-      });
-    });
+        this.facets$.next([...facets]);
 
-    facetGroups.find(f => f.scope === Scope.Category).expanded = facetGroups.find(f => f.scope === Scope.Category).facets.length <= 4;
+        break;
+    }
 
-    this.facetGroups.next([...facetGroups]);
+    this.updateItems();
   }
 }

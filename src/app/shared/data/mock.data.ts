@@ -5,53 +5,53 @@ import { MockData } from '../interfaces/mock-data.interface';
 
 export const MOCK_DATA: MockData = {
   categories: [
-    { id: 0, type: Categories.X },
-    { id: 1, type: Categories.Y },
-    { id: 2, type: Categories.Z }
+    { id: 1, type: Categories.X },
+    { id: 2, type: Categories.Y },
+    { id: 3, type: Categories.Z }
   ],
   eventTypes: [
-    { id: 0, type: EventTypes.A },
-    { id: 1, type: EventTypes.B },
-    { id: 2, type: EventTypes.C },
-    { id: 3, type: EventTypes.D },
-    { id: 4, type: EventTypes.E },
-    { id: 5, type: EventTypes.F },
-    { id: 6, type: EventTypes.G }
+    { id: 1, type: EventTypes.A },
+    { id: 2, type: EventTypes.B },
+    { id: 3, type: EventTypes.C },
+    { id: 4, type: EventTypes.D },
+    { id: 5, type: EventTypes.E },
+    { id: 6, type: EventTypes.F },
+    { id: 7, type: EventTypes.G }
   ],
   items: [
-    { id: 0, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
-    { id: 1, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 2, type: EventTypes.B, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
-    { id: 3, type: EventTypes.C, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 4, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
+    { id: 1, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
+    { id: 2, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Ø, visible: true },
+    { id: 3, type: EventTypes.B, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
+    { id: 4, type: EventTypes.C, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
     { id: 5, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 6, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
+    { id: 6, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
     { id: 7, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 8, type: EventTypes.F, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 9, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 10, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Ø, visible: true }
+    { id: 8, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
+    { id: 9, type: EventTypes.F, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
+    { id: 10, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
+    { id: 11, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Ø, visible: true }
   ],
   orgUnits: [
     {
       id: 0,
       type: OrgUnits.Æ,
-      categories: [0],
-      eventTypes: [0, 1],
-      items: [0, 2]
+      categories: [1],
+      eventTypes: [1, 2],
+      items: [1, 3]
     },
     {
       id: 1,
       type: OrgUnits.Ø,
-      categories: [0, 1, 2],
-      eventTypes: [0, 2, 3, 6],
-      items: [1, 3, 4, 5, 10]
+      categories: [1, 2, 3],
+      eventTypes: [1, 3, 4, 7],
+      items: [2, 4, 5, 6, 11]
     },
     {
       id: 2,
       type: OrgUnits.Å,
-      categories: [2],
-      eventTypes: [4, 5, 6],
-      items: [6, 7, 8, 9]
+      categories: [3],
+      eventTypes: [5, 6, 7],
+      items: [7, 8, 9, 10]
     }
   ]
 };
