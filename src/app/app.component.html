@@ -1,5 +1,7 @@
 <main class="app">
-  <app-filters [facets]="facets$ | async" [heading]="heading$ | async" class="app__filters" (facetToggled)="onFacetToggled($event);"
-    (loadData)="onLoadData();" (groupToggled)="onGroupToggled($event);"></app-filters>
+  <app-filters [facets]="facets$ | async" [facetType]="facetType$ | async" class="app__filters"
+    (facetToggled)="onFacetToggled($event);" (groupToggled)="onGroupToggled($event);"
+    (facetTypeSwitched)="onFacetTypeSwitched($event);">
+  </app-filters>
   <app-content [items]="items$ | async" class="app__content"></app-content>
 </main>

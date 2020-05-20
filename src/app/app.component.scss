@@ -17,7 +17,14 @@
   }
 
   &__filters {
-    width: 320px;
+    flex-shrink: 0;
+    width: 288px;
+    padding-top: 64px;
     border-right: 1px solid #eeeeee;
+  }
+
+  &__content {
+    flex-grow: 1;
+    padding-top: 72px;
   }
 }

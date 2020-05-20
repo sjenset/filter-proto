@@ -5,6 +5,7 @@ import { FacetToggleEvent } from './shared/interfaces/facet-toggle-event.interfa
 import { Facet } from './shared/interfaces/facet.interface';
 import { Item } from './shared/interfaces/item.interface';
 import { DataService } from './shared/services/data.service';
+import { FacetType } from './shared/enums/facet-type.enum';
 
 @Component({
   selector: 'app-root',
@@ -13,16 +14,19 @@ import { DataService } from './shared/services/data.service';
 })
 export class AppComponent implements OnInit {
   public facets$: Observable<Facet[]>;
-  public heading$: Observable<string>;
   public items$: Observable<Item[]>;
-  public loadedItems: Item[] = null;
+  public facetType$: Observable<FacetType>;
 
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
     this.items$ = this.dataService.items;
     this.facets$ = this.dataService.facets;
-    this.heading$ = this.dataService.heading;
+    this.facetType$ = this.dataService.facetType;
+  }
+
+  public onFacetTypeSwitched(facetType: FacetType): void {
+    this.dataService.switchFacetType(facetType);
   }
 
   public onFacetToggled(data: FacetToggleEvent): void {
@@ -31,9 +35,5 @@ export class AppComponent implements OnInit {
 
   public onGroupToggled(groupId: number): void {
     this.dataService.toggleGroup(groupId);
-  }
-
-  public onLoadData(): void {
-    alert('NYI: Load data');
   }
 }

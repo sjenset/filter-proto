@@ -19,35 +19,35 @@ export const MOCK_DATA: MockData = {
     { id: 7, type: EventTypes.G }
   ],
   items: [
-    { id: 1, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
-    { id: 2, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 3, type: EventTypes.B, categoryType: Categories.X, orgUnit: OrgUnits.Æ, visible: true },
-    { id: 4, type: EventTypes.C, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 5, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 6, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø, visible: true },
-    { id: 7, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 8, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 9, type: EventTypes.F, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 10, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Å, visible: true },
-    { id: 11, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Ø, visible: true }
+    { id: 1, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Æ },
+    { id: 2, type: EventTypes.A, categoryType: Categories.X, orgUnit: OrgUnits.Ø },
+    { id: 3, type: EventTypes.B, categoryType: Categories.X, orgUnit: OrgUnits.Æ },
+    { id: 4, type: EventTypes.C, categoryType: Categories.Y, orgUnit: OrgUnits.Ø },
+    { id: 5, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø },
+    { id: 6, type: EventTypes.D, categoryType: Categories.Y, orgUnit: OrgUnits.Ø },
+    { id: 7, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å },
+    { id: 8, type: EventTypes.E, categoryType: Categories.Z, orgUnit: OrgUnits.Å },
+    { id: 9, type: EventTypes.F, categoryType: Categories.Z, orgUnit: OrgUnits.Å },
+    { id: 10, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Å },
+    { id: 11, type: EventTypes.G, categoryType: Categories.Z, orgUnit: OrgUnits.Ø }
   ],
   orgUnits: [
     {
-      id: 0,
+      id: 1,
       type: OrgUnits.Æ,
       categories: [1],
       eventTypes: [1, 2],
       items: [1, 3]
     },
     {
-      id: 1,
+      id: 2,
       type: OrgUnits.Ø,
       categories: [1, 2, 3],
       eventTypes: [1, 3, 4, 7],
       items: [2, 4, 5, 6, 11]
     },
     {
-      id: 2,
+      id: 3,
       type: OrgUnits.Å,
       categories: [3],
       eventTypes: [5, 6, 7],

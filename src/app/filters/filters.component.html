@@ -1,5 +1,14 @@
 <ng-container *ngIf="facets">
-  <h3 class="filters__heading">{{ heading }}</h3>
+  <h3 class="filters__heading">Velg utgangspunkt:</h3>
+  <div class="filters__buttons">
+    <span class="filters__button filters__button--org-unit"
+      [ngClass]="{'filters__button--active': FacetTypes[facetType] === 'OrgUnits'}"
+      (click)="toggleFacetType($event, 'OrgUnits');">{{ Headings['OrgUnits']}}</span>
+    <span class="filters__button filters__button--categories"
+      [ngClass]="{'filters__button--active': FacetTypes[facetType] === 'Categories'}"
+      (click)="toggleFacetType($event, 'Categories');">{{ Headings['Categories']}}</span>
+  </div>
+  <h3 class="filters__heading">{{ Headings[FacetTypes[facetType]] }}</h3>
   <ul class="filters__list">
     <ng-container *ngFor="let facet of facets">
       <li class="filters__item">

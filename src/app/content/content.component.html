@@ -1,20 +1,24 @@
-<ng-container *ngIf="itemsLoaded && items && items.length; else EmptyState">
+<div *ngIf="changesDetected$ | async" class="content__warning">
+  <p>Dataene du har lastet inn reflekterer ikke nødvendigvis de siste endringene du
+    har gjort på filtrene dine.</p>
+  <p>Ønsker du å <span class="content__reload" (click)="loadData($event);">laste inn de nyeste dataene?</span></p>
+</div>
+
+<ng-container *ngIf="itemsLoaded && loadedItems.length; else EmptyState">
+  <ul class="content__list">
+    <li *ngFor="let item of loadedItems" class="content__card">
+      <b class="content__heading">Org. enhet:</b>
+      <span class="content__text">{{ item.orgUnit }}</span>
+      <b class="content__heading">Kategori:</b>
+      <span class="content__text">{{ item.categoryType }}</span>
+      <b class="content__heading">Hendelsestype:</b>
+      <span class="content__text">{{ item.type }}</span>
+    </li>
+  </ul>
 </ng-container>
 
 <ng-template #EmptyState>
   <p>Du har for øyeblikket ikke lastet inn noe data.</p>
   <p>Benytt venstre-menyen for å velge hvilke data som skal hentes.</p>
-  <span class="content__button">Hent valgte data</span>
-  <h3>Debug:</h3>
-  <pre>Amount: {{ items.length }}</pre>
-  <ul>
-    <li *ngFor="let item of items">
-      <pre>
-        ID: {{ item.id }}
-        OrgUnit: {{ item.orgUnit }}
-        Type: {{ item.type }}
-        Category: {{ item.categoryType }}
-      </pre>
-    </li>
-  </ul>
+  <span class="content__button" (click)="loadData($event);">Hent valgte data</span>
 </ng-template>

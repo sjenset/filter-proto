@@ -18,3 +18,15 @@ body {
   font-size: 16px;
   font-weight: 400;
 }
+
+p {
+  margin: 8px 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
