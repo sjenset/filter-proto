@@ -177,10 +177,11 @@ export class DataService {
           });
           items = items.filter(i => {
             return (!orgUnits.length || orgUnits.indexOf(i.orgUnit) !== -1) &&
-              (!eventTypes.length || eventTypes.indexOf(i.type) !== -1);
+            (!eventTypes.length || eventTypes.indexOf(i.type) !== -1);
           });
           items.forEach(i => newItems.push(i));
         });
+        console.error(newItems);
         break;
       case FacetType.OrgUnits:
         facets.filter(o => o.selected).forEach(o => {
@@ -216,7 +217,7 @@ export class DataService {
           const items = MOCK_DATA.items.filter(i => i.categoryType === c.type);
 
           MOCK_DATA.orgUnits.filter(o => o.categories.indexOf(c.id) !== -1).forEach(o => {
-            const orgUnitItems = MOCK_DATA.items.filter(i => o.items.indexOf(i.id) && i.categoryType === c.type);
+            const orgUnitItems = MOCK_DATA.items.filter(i => o.items.indexOf(i.id) !== -1 && i.categoryType === c.type);
             const eventTypes = [...new Set(orgUnitItems.map(i => i.type))];
             const eventTypeFacets: Facet[] = [];
 
